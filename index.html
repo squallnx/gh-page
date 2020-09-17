@@ -45,10 +45,116 @@
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
 
+    <script type="text/javascript">
+      (function (e, t) {
+        var n = e.amplitude || { _q: [], _iq: {} };
+        var r = t.createElement("script");
+        r.type = "text/javascript";
+        r.integrity =
+          "sha384-+EOJUyXoWkQo2G0XTc+u2DOlZkrMUcc5yOqCuE2XHRnytSyqpFQSbgFZAlGmjpLI";
+        r.crossOrigin = "anonymous";
+        r.async = true;
+        r.src = "https://cdn.amplitude.com/libs/amplitude-7.1.1-min.gz.js";
+        r.onload = function () {
+          if (!e.amplitude.runQueuedFunctions) {
+            console.log("[Amplitude] Error: could not load SDK");
+          }
+        };
+        var i = t.getElementsByTagName("script")[0];
+        i.parentNode.insertBefore(r, i);
+        function s(e, t) {
+          e.prototype[t] = function () {
+            this._q.push([t].concat(Array.prototype.slice.call(arguments, 0)));
+            return this;
+          };
+        }
+        var o = function () {
+          this._q = [];
+          return this;
+        };
+        var a = [
+          "add",
+          "append",
+          "clearAll",
+          "prepend",
+          "set",
+          "setOnce",
+          "unset",
+        ];
+        for (var u = 0; u < a.length; u++) {
+          s(o, a[u]);
+        }
+        n.Identify = o;
+        var c = function () {
+          this._q = [];
+          return this;
+        };
+        var l = [
+          "setProductId",
+          "setQuantity",
+          "setPrice",
+          "setRevenueType",
+          "setEventProperties",
+        ];
+        for (var p = 0; p < l.length; p++) {
+          s(c, l[p]);
+        }
+        n.Revenue = c;
+        var d = [
+          "init",
+          "logEvent",
+          "logRevenue",
+          "setUserId",
+          "setUserProperties",
+          "setOptOut",
+          "setVersionName",
+          "setDomain",
+          "setDeviceId",
+          "enableTracking",
+          "setGlobalUserProperties",
+          "identify",
+          "clearUserProperties",
+          "setGroup",
+          "logRevenueV2",
+          "regenerateDeviceId",
+          "groupIdentify",
+          "onInit",
+          "logEventWithTimestamp",
+          "logEventWithGroups",
+          "setSessionId",
+          "resetSessionId",
+        ];
+        function v(e) {
+          function t(t) {
+            e[t] = function () {
+              e._q.push([t].concat(Array.prototype.slice.call(arguments, 0)));
+            };
+          }
+          for (var n = 0; n < d.length; n++) {
+            t(d[n]);
+          }
+        }
+        v(n);
+        n.getInstance = function (e) {
+          e = (!e || e.length === 0 ? "$default_instance" : e).toLowerCase();
+          if (!n._iq.hasOwnProperty(e)) {
+            n._iq[e] = { _q: [] };
+            v(n._iq[e]);
+          }
+          return n._iq[e];
+        };
+        e.amplitude = n;
+      })(window, document);
+      if (window.myidSession) {
+        amplitude
+          .getInstance()
+          .init("5483e5191eface8243f40228c2eec6dd", window.myidSession.phone);
+      }
+    </script>
+
     <!-- TODO: Add SDKs for Firebase products that you want to use
    https://firebase.google.com/docs/web/setup#available-libraries -->
     <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-analytics.js"></script>
-
     <script>
       // Your web app's Firebase configuration
       var firebaseConfig = {
@@ -64,8 +170,67 @@
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
       firebase.analytics();
+
+      function traverseAndFlatten(currentNode, target, flattenedKey) {
+        for (var key in currentNode) {
+          if (currentNode.hasOwnProperty(key)) {
+            var newKey;
+            if (flattenedKey === undefined) {
+              newKey = key;
+            } else {
+              newKey = flattenedKey + "." + key;
+            }
+
+            var value = currentNode[key];
+            if (typeof value === "object") {
+              traverseAndFlatten(value, target, newKey);
+            } else {
+              target[newKey] = value;
+            }
+          }
+        }
+      }
+
+      function flatten(obj) {
+        var flattenedObject = {};
+        traverseAndFlatten(obj, flattenedObject);
+        return flattenedObject;
+      }
+
+      var evPermits = {
+        "get-prize-value": true,
+        "get-prize-box": true,
+      };
+
+      var evProps = {
+        score: true,
+        "get-player-turn": true,
+      };
+
+      var userProps = {};
+      function setUserProps(props) {
+        for (var key in props) {
+          if (props.hasOwnProperty(key)) {
+            userProps[key] = props[key];
+          }
+        }
+        amplitude.setUserProperties(userProps);
+      }
+
       window.logEvent = function (name, params) {
-        firebase.analytics().logEvent(name, params);
+        var flatParams = flatten(params);
+        firebase.analytics().logEvent(name, flatParams);
+        if (
+          evProps[name] &&
+          params &&
+          params.response &&
+          params.response.result
+        ) {
+          setUserProps(params.response.result);
+        }
+        if (evPermits[name]) {
+          amplitude.getInstance().logEvent(name, flatParams);
+        }
       };
     </script>
   </head>
@@ -85,7 +250,7 @@
     </div>
 
     <script src="src/settings.ab7a1.js" charset="utf-8"></script>
-    <script src="main.55c86.js" charset="utf-8"></script>
+    <script src="main.566ee.js" charset="utf-8"></script>
 
     <script type="text/javascript">
       (function () {
