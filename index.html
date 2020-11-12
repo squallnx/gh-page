@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
 
-  <title>Cocos Creator | hello_world</title>
+  <title>Flappy Santa</title>
 
   <!--http://www.html5rocks.com/en/mobile/mobifying/-->
   <meta name="viewport"
@@ -37,20 +37,21 @@
   <!--<link rel="apple-touch-icon" href=".png" />-->
   <!--<link rel="apple-touch-icon-precomposed" href=".png" />-->
 
-  <link rel="stylesheet" type="text/css" href="style-mobile.6e9cd.css"/>
-  <link rel="icon" href="favicon.8de18.ico"/>
+  <link rel="stylesheet" type="text/css" href="style-mobile.css"/>
+  <link rel="icon" href="icon.ico"/>
 </head>
 <body>
   <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="0"></canvas>
   <div id="splash">
-    <div class="progress-bar stripes">
-      <span style="width: 0%"></span>
+    <div class="progress-bar">
+      <span id="loading-icon"></span>
+      <span id="loading-circle"></span>
     </div>
   </div>
 
-<script src="src/settings.6abc3.js" charset="utf-8"></script>
+<script src="src/settings.f171b.js" charset="utf-8"></script>
 
-<script src="main.8a458.js" charset="utf-8"></script>
+<script src="main.843a2.js" charset="utf-8"></script>
 
 <script type="text/javascript">
 (function () {
