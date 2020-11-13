@@ -48,6 +48,7 @@
       <p style="position: relative">Loading...</p>
     </div>
   </div>
+  <canvas id="loading" style="position: absolute; width: 100%; height: 100%;" width="750" height="1334" oncontextmenu="event.preventDefault()"></canvas>
 
 <script src="src/settings.js" charset="utf-8"></script>
 
@@ -84,8 +85,163 @@
       else {
         window.boot();
       }
+
+      var onSceneLaunch = function(){
+        cc.director.off(cc.Director.EVENT_AFTER_SCENE_LAUNCH, onSceneLaunch);
+
+        document.body.removeChild(loadingCanvas);
+        window.cancelAnimationFrame(myRequestAnimId);
+        onSceneLaunch = null;
+        myOffsetX = null;
+        myRequestAnimId = null;
+        loadingCanvas = null;
+        loadingDefines = null;
+      };
+      cc.director.on(cc.Director.EVENT_AFTER_SCENE_LAUNCH, onSceneLaunch);
     });
 })();
+</script>
+<script>
+  var myOffsetX = 0;
+  window.onload = function(){
+    loadingCanvas.width = loadingCanvas.height * (window.innerWidth / window.innerHeight);
+    myOffsetX = (loadingCanvas.width - 750) / 2;
+  };
+
+  var myRequestAnimId;
+  var loadingCanvas = document.getElementById('loading');
+  var loadingDefines = {
+    frameTime: 1/60,
+    imgs: {
+      santa: {dir: 'santa.png', obj: new Image(), loaded: false},
+      bird01: {dir: 'bird/1.png', obj: new Image(), loaded: false},
+      bird02: {dir: 'bird/2.png', obj: new Image(), loaded: false},
+      bird03: {dir: 'bird/3.png', obj: new Image(), loaded: false},
+      bird04: {dir: 'bird/4.png', obj: new Image(), loaded: false},
+      bird05: {dir: 'bird/5.png', obj: new Image(), loaded: false},
+      bird06: {dir: 'bird/6.png', obj: new Image(), loaded: false},
+      bird07: {dir: 'bird/7.png', obj: new Image(), loaded: false},
+      bird08: {dir: 'bird/8.png', obj: new Image(), loaded: false},
+      bird09: {dir: 'bird/9.png', obj: new Image(), loaded: false},
+      bird10: {dir: 'bird/10.png', obj: new Image(), loaded: false},
+      rocket01: {dir: 'rocket/ROCKET_3.png', obj: new Image(), loaded: false},
+      rocket02: {dir: 'rocket/ROCKET_4.png', obj: new Image(), loaded: false},
+      rocket03: {dir: 'rocket/ROCKET_5.png', obj: new Image(), loaded: false},
+    }
+  };
+  
+  (function(){
+    var canvas = loadingCanvas;
+    var ctx = canvas.getContext('2d');
+    var start = Date.now();
+
+    function loadImage(onComplete){
+      var total = 0;
+      var count = 0;
+      var successCount = 0;
+      for (var key in loadingDefines.imgs) {
+        var image = loadingDefines.imgs[key];
+        if(!image.loaded){
+          total++;
+          image.obj.src = 'imgs/' + image.dir;
+          image.obj.onload = function(){
+            count++;
+            successCount++;
+            if(count == total){
+              onComplete(successCount == total);              
+            }
+          };
+
+          image.obj.onerror = function(){
+            count++;
+            if(count == total){
+              onComplete(successCount == total);              
+            }
+          };
+        }
+      }
+    }
+
+    function animateLoading(){
+      var bird = new animation([
+        loadingDefines.imgs.bird01.obj,
+        loadingDefines.imgs.bird02.obj,
+        loadingDefines.imgs.bird03.obj,
+        loadingDefines.imgs.bird04.obj,
+        loadingDefines.imgs.bird05.obj,
+        loadingDefines.imgs.bird06.obj,
+        loadingDefines.imgs.bird07.obj,
+        loadingDefines.imgs.bird08.obj,
+        loadingDefines.imgs.bird09.obj,
+        loadingDefines.imgs.bird10.obj,
+      ], 4, 0.25);
+      var santa = new animation([
+        loadingDefines.imgs.santa.obj,
+      ], 1, 0.5);
+      var rocket = new animation([
+        loadingDefines.imgs.rocket01.obj,
+        loadingDefines.imgs.rocket02.obj,
+        loadingDefines.imgs.rocket03.obj,
+      ], 5, 0.5);
+
+      bird.setPos(canvas.width / 2 + 70, canvas.height / 2 - 250);
+      santa.setPos(canvas.width / 2 - 180, canvas.height / 2 - 250);
+      rocket.setPos(canvas.width / 2 - 190, canvas.height / 2 - 125);
+
+      function loop() {
+        var current = Date.now();
+        var dt = (current - start) / 1000;
+        start = current;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        bird.update(dt);
+        bird.render(ctx);
+        santa.update(dt);
+        santa.render(ctx);
+        rocket.update(dt);
+        rocket.render(ctx);
+
+        myRequestAnimId = window.requestAnimationFrame(loop);
+      }
+
+      myRequestAnimId = window.requestAnimationFrame(loop);
+    }
+
+    function animation(imgs, eachFrameCount, scale){
+      this.x = 0;
+      this.y = 0;
+      this.rotate = 0;
+      this.frameIndex = 0;
+      this.time = 0;
+      this.timePerFrame = loadingDefines.frameTime * eachFrameCount;
+
+      this.setPos = function(x, y){
+        this.x = x;
+        this.y = y;
+      };
+
+      this.update = function(dt){
+        this.time += dt;
+        if(this.time >= this.timePerFrame){
+          var step = Math.floor(this.time / this.timePerFrame);
+          this.time %= this.timePerFrame;
+          this.frameIndex = (this.frameIndex + step) % imgs.length;
+        }
+      };
+
+      this.render = function(ctx){
+        var img = imgs[this.frameIndex];
+        ctx.drawImage(img, 0, 0, img.width, img.height, this.x + myOffsetX, this.y, img.width * scale, img.height * scale);
+      };
+    }
+
+    loadImage(function(isLoaded){
+      if(isLoaded){
+        animateLoading();
+      }
+    });
+  })();
 </script>
 </body>
 </html>
