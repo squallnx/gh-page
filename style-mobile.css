@@ -94,7 +94,7 @@ p.footer {
 .progress-bar {
     position: absolute;
     left: 27.5%;
-    top: 80%;
+    top: 50%;
     height: 3px;
     padding: 2px;
     width: 45%;
