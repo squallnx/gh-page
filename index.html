@@ -37,7 +37,7 @@
   <!--<link rel="apple-touch-icon" href=".png" />-->
   <!--<link rel="apple-touch-icon-precomposed" href=".png" />-->
 
-  <link rel="stylesheet" type="text/css" href="style-mobile.d7d5e.css"/>
+  <link rel="stylesheet" type="text/css" href="style-mobile.287d0.css"/>
   <link rel="icon" href="icon.58d99.ico"/>
 </head>
 <body>
@@ -50,9 +50,9 @@
   </div>
   <canvas id="loading-canvas" style="position: absolute; width: 100%; height: 100%; visibility: hidden;" width="750" height="1334" oncontextmenu="event.preventDefault()"></canvas>
 
-<script src="src/settings.e7e79.js" charset="utf-8"></script>
+<script src="src/settings.44a41.js" charset="utf-8"></script>
 
-<script src="main.5c8d6.js" charset="utf-8"></script>
+<script src="main.78153.js" charset="utf-8"></script>
 
 <script type="text/javascript">
 (function () {
@@ -90,7 +90,7 @@
     });
 })();
 </script>
-<script>
+<script id="loading-anim-script">
   var myOffsetX = 0;
   window.onload = function(){
     loadingCanvas.width = loadingCanvas.height * (window.innerWidth / window.innerHeight);
@@ -99,6 +99,7 @@
   };
 
   var myRequestAnimId;
+  var loadingAnimScript = document.getElementById('loading-anim-script');
   var loadingCanvas = document.getElementById('loading-canvas');
   var loadingDefines = {
     frameTime: 1/60,
@@ -128,6 +129,8 @@
     loadingCanvas = null;
     loadingDefines = null;
     cleanUpLoading = null;
+    document.body.removeChild(loadingAnimScript);
+    loadingAnimScript = null;
   };
   
   (function(){
