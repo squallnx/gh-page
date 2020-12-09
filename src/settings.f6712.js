@@ -1,5 +1,0 @@
-<<<<<<< HEAD:src/settings.297ef.js
-window._CCSettings={platform:"web-mobile",groupList:["default","Game","Bg","Player","Item","Obstacle"],collisionMatrix:[[true],[false,false],[false,false,false],[false,false,false,false,true,true],[false,false,false,true,false],[false,false,false,true,false,false]],hasResourcesBundle:false,hasStartSceneBundle:false,remoteBundles:[],subpackages:[],launchScene:"db://assets/scenes/game.fire",orientation:"portrait",jsList:[],bundleVers:{internal:"279e0",main:"74837"}};
-=======
-window._CCSettings={platform:"web-mobile",groupList:["default","Game","Bg","Player","Item","Obstacle"],collisionMatrix:[[true],[false,false],[false,false,false],[false,false,false,false,true,true],[false,false,false,true,false],[false,false,false,true,false,false]],hasResourcesBundle:false,hasStartSceneBundle:false,remoteBundles:[],subpackages:[],launchScene:"db://assets/scenes/game.fire",orientation:"portrait",jsList:[],bundleVers:{internal:"279e0",main:"09c70"}};
->>>>>>> 1abbc6e24f5323d8477af40cad25b38e5efd4c3a:src/settings.f6712.js
